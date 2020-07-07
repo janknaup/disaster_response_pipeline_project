@@ -32,8 +32,8 @@ def load_data(messages_filepath, categories_filepath):
     :param categories_filepath: path to the categories csv file
     :return:
     """
-    cats_raw_df = pd.read_csv("../data/disaster_categories.csv", header=0, index_col='id')
-    messages = pd.read_csv("../data/disaster_messages.csv", header=0, index_col='id')
+    cats_raw_df = pd.read_csv(categories_filepath, header=0, index_col='id')
+    messages = pd.read_csv(messages_filepath, header=0, index_col='id')
     return messages.join(cats_raw_df)
 
 
