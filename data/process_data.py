@@ -1,12 +1,57 @@
 import sys
+import pandas as pd
+
+
+def get_categories(df: pd.DataFrame):
+    """
+    get category names from 1st item in data frame. assumes categories appear in same order in every row
+
+    :param df: data frame to sample
+    :return: list of category name strings
+    """
+    tokens = df.iloc[0]['categories'].split(";")
+    return [tok.split("-")[0] for tok in tokens]
+
+
+def get_category_values(line: str):
+    """
+    Parse a message categories line, return values as list
+
+    :param line: categories string for single disaster message
+    :return: list of 1-hot encoded categories
+    """
+    tokens = line.split(";")
+    return pd.Series([int(tok.split("-")[1]) for tok in tokens])
 
 
 def load_data(messages_filepath, categories_filepath):
-    pass
+    """
+    loads messages and categories, joins into single data frame
+
+    :param messages_filepath: path to the messages csv file
+    :param categories_filepath: path to the categories csv file
+    :return:
+    """
+    cats_raw_df = pd.read_csv("../data/disaster_categories.csv", header=0, index_col='id')
+    messages = pd.read_csv("../data/disaster_messages.csv", header=0, index_col='id')
+    return messages.join(cats_raw_df)
 
 
 def clean_data(df):
-    pass
+    """
+    splits categories string-blob column into 1-hot indicator columns
+    removes messages with "NOTES:" marker, which are irrelevant or have individual problems
+
+    :param df: input DataFrame
+    :return: cleaned DataFrame
+    """
+    cat_columns = get_categories(df)
+    cat_indicators = df['categories'].apply(get_category_values)
+    cat_indicators.columns = cat_columns
+    indicators_df = df.join(cat_indicators).drop('categories', axis=1)
+    noted_indices = df.loc[df['message'].str.contains('NOTES:')].index
+    cleaned = indicators_df.drop(noted_indices, axis=0)
+    return cleaned
 
 
 def save_data(df, database_filename):
