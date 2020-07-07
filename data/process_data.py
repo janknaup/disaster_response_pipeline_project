@@ -1,5 +1,6 @@
 import sys
 import pandas as pd
+import sqlite3
 
 
 def get_categories(df: pd.DataFrame):
@@ -55,7 +56,16 @@ def clean_data(df):
 
 
 def save_data(df, database_filename):
-    pass  
+    """
+    Saves the disaster recovery data into table 'disaster_messages' the given sqlite3 database.
+    Will overwrite an existing table.
+
+    :param df: DataFrame with cleaned message and category data
+    :param database_filename: sqlite3 file to write to
+    :return:
+    """
+    with sqlite3.connect(database_filename) as conn:
+        df.to_sql('disaster_messages', conn, if_exists='replace')
 
 
 def main():
@@ -76,11 +86,11 @@ def main():
         print('Cleaned data saved to database!')
     
     else:
-        print('Please provide the filepaths of the messages and categories '\
-              'datasets as the first and second argument respectively, as '\
-              'well as the filepath of the database to save the cleaned data '\
-              'to as the third argument. \n\nExample: python process_data.py '\
-              'disaster_messages.csv disaster_categories.csv '\
+        print('Please provide the filepaths of the messages and categories '
+              'datasets as the first and second argument respectively, as '
+              'well as the filepath of the database to save the cleaned data '
+              'to as the third argument. \n\nExample: python process_data.py '
+              'disaster_messages.csv disaster_categories.csv '
               'DisasterResponse.db')
 
 
