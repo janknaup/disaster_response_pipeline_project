@@ -13,6 +13,7 @@ nltk.download('wordnet')
 from nltk import word_tokenize
 from nltk import WordNetLemmatizer
 from nltk.corpus import stopwords
+import joblib
 
 def load_data(database_filepath):
     """
@@ -53,7 +54,12 @@ def evaluate_model(model, X_test, Y_test, category_names):
 
 
 def save_model(model, model_filepath):
-    pass
+    """
+    Efficiently saves model in pickle format
+    :param model: model to save
+    :param model_filepath: path to pickle file to create
+    """
+    joblib.dump(model, model_filepath)
 
 
 def main():
