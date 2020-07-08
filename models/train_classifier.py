@@ -1,7 +1,11 @@
 import sys
 import pandas as pd
 import sqlite3
-
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.multioutput import MultiOutputClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.feature_extraction.text import TfidfVectorizer
 import nltk
 nltk.download('punkt')
 nltk.download('stopwords')
@@ -34,7 +38,14 @@ def tokenize(text):
 
 
 def build_model():
-    pass
+    """
+    :return: message classification pipeline
+    """
+    pipeline = Pipeline([
+        ('vectorizer', TfidfVectorizer(tokenizer=tokenize)),
+        ('classifier', MultiOutputClassifier(RandomForestClassifier(), n_jobs=-1)),
+    ])
+    return pipeline
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
