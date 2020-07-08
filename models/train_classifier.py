@@ -5,7 +5,7 @@ import sqlite3
 
 def load_data(database_filepath):
     """
-    Read previously ingested training data from provided sqlite3 database file. Transform some basic features.
+    Read previously ingested training data from provided sqlite3 database file.
 
     :param database_filepath: path to the database file to read from
     :return: factors, responses, response category names
@@ -16,8 +16,7 @@ def load_data(database_filepath):
     for remcat in ['message', 'original', 'genre']:
         catnames.remove(remcat)
     Y = raw_data_df[catnames]
-    X = pd.DataFrame(raw_data_df['message'])
-    X['has_original'] = raw_data_df['original'].apply(lambda x: 0 if x is None else 1)
+    X = raw_data_df['message']
     return X, Y, catnames
 
 
