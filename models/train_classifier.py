@@ -1,8 +1,24 @@
 import sys
+import pandas as pd
+import sqlite3
 
 
 def load_data(database_filepath):
-    pass
+    """
+    Read previously ingested training data from provided sqlite3 database file. Transform some basic features.
+
+    :param database_filepath: path to the database file to read from
+    :return: factors, responses, response category names
+    """
+    with sqlite3.connect(database_filepath) as conn:
+        raw_data_df = pd.read_sql_query('SELECT * FROM disaster_messages;', conn, index_col='id')
+    catnames = list(raw_data_df.columns)
+    for remcat in ['message', 'original', 'genre']:
+        catnames.remove(remcat)
+    Y = raw_data_df[catnames]
+    X = pd.DataFrame(raw_data_df['message'])
+    X['has_original'] = raw_data_df['original'].apply(lambda x: 0 if x is None else 1)
+    return X, Y, catnames
 
 
 def tokenize(text):
@@ -26,6 +42,7 @@ def main():
         database_filepath, model_filepath = sys.argv[1:]
         print('Loading data...\n    DATABASE: {}'.format(database_filepath))
         X, Y, category_names = load_data(database_filepath)
+        print(X)
         X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
         
         print('Building model...')
