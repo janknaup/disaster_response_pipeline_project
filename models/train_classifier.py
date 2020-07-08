@@ -2,6 +2,13 @@ import sys
 import pandas as pd
 import sqlite3
 
+import nltk
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('wordnet')
+from nltk import word_tokenize
+from nltk import WordNetLemmatizer
+from nltk.corpus import stopwords
 
 def load_data(database_filepath):
     """
@@ -21,7 +28,9 @@ def load_data(database_filepath):
 
 
 def tokenize(text):
-    pass
+    tokens = [tok.lower() for tok in word_tokenize(text, language='english') if tok not in stopwords.words("english")]
+    lemmas = [WordNetLemmatizer().lemmatize(tok) for tok in tokens]
+    return lemmas
 
 
 def build_model():
