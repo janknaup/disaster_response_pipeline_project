@@ -42,6 +42,7 @@ def clean_data(df):
     """
     splits categories string-blob column into 1-hot indicator columns
     removes messages with "NOTES:" marker, which are irrelevant or have individual problems
+    duplicate messages are removed
 
     :param df: input DataFrame
     :return: cleaned DataFrame
@@ -51,7 +52,8 @@ def clean_data(df):
     cat_indicators.columns = cat_columns
     indicators_df = df.join(cat_indicators).drop('categories', axis=1)
     noted_indices = df.loc[df['message'].str.contains('NOTES:')].index
-    cleaned = indicators_df.drop(noted_indices, axis=0)
+    notes_cleaned = indicators_df.drop(noted_indices, axis=0)
+    cleaned = notes_cleaned.drop_duplicates(subset='message')
     return cleaned
 
 
