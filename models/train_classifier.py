@@ -6,6 +6,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.multioutput import MultiOutputClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics import f1_score, recall_score, precision_score
 import nltk
 nltk.download('punkt')
 nltk.download('stopwords')
@@ -50,7 +51,17 @@ def build_model():
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
-    pass
+    y_pred = model.predict(X_test)
+    print("Model evaluation")
+    print("category                  | f1 score   | precision  | recall    ")
+    print("================================================================")
+    for i, category in enumerate(category_names):
+        print("{0:25s} | {1:10.6f} | {2:10.6f} | {3:10.6f}".format(
+            category, f1_score(Y_test[category].values, y_pred[:,i], average='micro'),
+            precision_score(Y_test[category].values, y_pred[:,i], average='micro'),
+            recall_score(Y_test[category].values, y_pred[:,i], average='micro')
+        ))
+    print("================================================================")
 
 
 def save_model(model, model_filepath):
@@ -71,10 +82,11 @@ def main():
         X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
         
         print('Building model...')
-        model = build_model()
+        #model = build_model()
+        model = joblib.load('classifier.pkl')
         
         print('Training model...')
-        model.fit(X_train, Y_train)
+        #model.fit(X_train, Y_train)
         
         print('Evaluating model...')
         evaluate_model(model, X_test, Y_test, category_names)
