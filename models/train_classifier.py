@@ -1,7 +1,7 @@
 import sys
 import pandas as pd
 import sqlite3
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.pipeline import Pipeline
 from sklearn.multioutput import MultiOutputClassifier
 from sklearn.ensemble import RandomForestClassifier
@@ -47,12 +47,20 @@ def build_model():
         ('vectorizer', TfidfVectorizer(tokenizer=tokenize)),
         ('classifier', MultiOutputClassifier(RandomForestClassifier(), n_jobs=-1)),
     ])
-    return pipeline
+    model = GridSearchCV(pipeline, {
+        'vectorizer__ngram_range': [(1, 1), (1, 2)],
+        'vectorizer__max_features': [50, 100, 200],
+        'classifier__estimator__n_estimators': [50, 100, 200]
+    }, n_jobs=None)
+    return model
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
     y_pred = model.predict(X_test)
-    print("Model evaluation")
+    print("Model optimal paramaters")
+    for par in model.best_params_:
+        print(par, " : ", model.best_params_[par])
+    print("\nModel evaluation")
     print("category                  | f1 score   | precision  | recall    ")
     print("================================================================")
     for i, category in enumerate(category_names):
@@ -82,11 +90,10 @@ def main():
         X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
         
         print('Building model...')
-        #model = build_model()
-        model = joblib.load('classifier.pkl')
+        model = build_model()
         
         print('Training model...')
-        #model.fit(X_train, Y_train)
+        model.fit(X_train, Y_train)
         
         print('Evaluating model...')
         evaluate_model(model, X_test, Y_test, category_names)
