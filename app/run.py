@@ -39,12 +39,19 @@ model = joblib.load("../models/classifier.pkl")
 def index():
     
     # extract data needed for visuals
-    # TODO: Below is an example - modify to extract data for your own visuals
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
-    
+
+    categories = list(df.columns)
+    for remcol in ["message", "original", "id", "genre"]:
+        categories.remove(remcol)
+
+    category_counts = df[categories].sum().values
+    english_category_counts = df.loc[df['original'].isna().values][categories].sum().values
+
+    genre_category_counts = df.groupby('genre').sum()[categories]
+
     # create visuals
-    # TODO: Below is an example - modify to create your own visuals
     graphs = [
         {
             'data': [
@@ -62,6 +69,51 @@ def index():
                 'xaxis': {
                     'title': "Genre"
                 }
+            }
+        },
+        {
+            'data': [
+                Bar(
+                    x=categories,
+                    y=category_counts - english_category_counts,
+                    name='French / Creole'
+                ),
+                Bar(
+                    x=categories,
+                    y=english_category_counts,
+                    name='English'
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of Message Categories<br>By Original Message Language',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Category"
+                },
+                'barmode': 'stack'
+            }
+        },
+        {
+            'data': [
+                Bar(
+                    x=categories,
+                    y=100 * genre_category_counts.loc[genre] / category_counts,
+                    name=genre
+                ) for genre in genre_names
+            ],
+
+            'layout': {
+                'title': 'Proportion of Message Genres by Category',
+                'yaxis': {
+                    'title': "Genre Percentage"
+                },
+                'xaxis': {
+                    'title': "Category"
+                },
+                'barmode': 'stack'
             }
         }
     ]
