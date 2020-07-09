@@ -34,6 +34,15 @@ def load_data(database_filepath):
 
 
 def tokenize(text):
+    """
+    Custom tokenizer for message text
+
+    Messages are normalized to lower case, stopwords are removed and the remaining words are lemmatized using
+    WordNet lemmatizer.
+
+    :param text: text to tokenize
+    :return: list of lowercase, lemmatized tokens
+    """
     tokens = [tok.lower() for tok in word_tokenize(text, language='english') if tok not in stopwords.words("english")]
     lemmas = [WordNetLemmatizer().lemmatize(tok) for tok in tokens]
     return lemmas
@@ -41,6 +50,17 @@ def tokenize(text):
 
 def build_model():
     """
+    Message Classification pipeline builder
+
+    The Pipeline is made up of
+     1. TF-IDF Vectorizer using the custom tokenize function from this module
+     2. Multi-output classifier using a Randon Forest classifier
+
+    The pipeline is set up for grid search of optimized parameters. The optimized parameters are
+     * vectorizer ngram range, 1-grams or 1- and 2-grams
+     * maximum number of features extracted by the vectorizer, 50-200
+     * number of estimators in the random forest classifier, 50-200 estimators
+
     :return: message classification pipeline
     """
     pipeline = Pipeline([
@@ -56,6 +76,17 @@ def build_model():
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
+    """
+    Model evaluation and output to console.
+
+    For context, the optimized model parameters are printed frist.
+    Weighted average f1 score, precision and prediction are tabtabulated per category
+
+    :param model: model to evaluate
+    :param X_test: test set messages
+    :param Y_test: test set true categories
+    :param category_names: list of category names
+    """
     y_pred = model.predict(X_test)
     print("Model optimal paramaters")
     for par in model.best_params_:
@@ -74,7 +105,8 @@ def evaluate_model(model, X_test, Y_test, category_names):
 
 def save_model(model, model_filepath):
     """
-    Efficiently saves model in pickle format
+    Efficiently saves model in pickle format at the specified file path
+
     :param model: model to save
     :param model_filepath: path to pickle file to create
     """
