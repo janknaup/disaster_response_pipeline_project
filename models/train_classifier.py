@@ -65,9 +65,9 @@ def evaluate_model(model, X_test, Y_test, category_names):
     print("================================================================")
     for i, category in enumerate(category_names):
         print("{0:25s} | {1:10.6f} | {2:10.6f} | {3:10.6f}".format(
-            category, f1_score(Y_test[category].values, y_pred[:,i], average='micro'),
-            precision_score(Y_test[category].values, y_pred[:,i], average='micro'),
-            recall_score(Y_test[category].values, y_pred[:,i], average='micro')
+            category, f1_score(Y_test[category].values, y_pred[:,i], average='weighted'),
+            precision_score(Y_test[category].values, y_pred[:,i], average='weighted'),
+            recall_score(Y_test[category].values, y_pred[:,i], average='weighted')
         ))
     print("================================================================")
 
