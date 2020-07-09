@@ -49,8 +49,8 @@ def build_model():
     ])
     model = GridSearchCV(pipeline, {
         'vectorizer__ngram_range': [(1, 1), (1, 2)],
-        'vectorizer__max_features': [50, 100, 200],
-        'classifier__estimator__n_estimators': [50, 100, 200]
+        'vectorizer__max_features': [20, 50, 100, 200, None],
+        'classifier__estimator__n_estimators': [10, 20, 50, 100, 200]
     }, n_jobs=None)
     return model
 
