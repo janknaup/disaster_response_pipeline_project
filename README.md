@@ -121,7 +121,7 @@ Model evaluation
 |cold                      |   0.971752 |   0.962821 |   0.980851 |
 |other_weather             |   0.933547 |   0.930230 |   0.951644 |
 |direct_report             |   0.836577 |   0.840798 |   0.853772 |
-|--------------------------|------------|------------|------------|
+
 
 It should be noted that the model parameters chosen represent the maximum values for number of estimators and number of
 features. This indicated that the whole model is still underfitted. However, the training of larger models would not
