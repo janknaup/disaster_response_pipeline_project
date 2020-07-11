@@ -76,7 +76,7 @@ def index():
                 Bar(
                     x=categories,
                     y=category_counts - english_category_counts,
-                    name='French / Creole'
+                    name='Other'
                 ),
                 Bar(
                     x=categories,
