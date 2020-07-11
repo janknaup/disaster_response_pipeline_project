@@ -16,6 +16,20 @@ forwarding to relevant aid providers.
 
 3. Go to http://0.0.0.0:3001/ or http://{hostname}:3001/
    Where {hostname} is the domain name or IP address of your web server.
+   
+## Project Structure:
+
+The Project is structured into:
+ * a separate ETL pipeline in the `data` directory. The original data is contain the the 
+   `.csv` files in that directory. The joined and cleaned training data is stored in Sqlite3 format in 
+   `DisasterResponse.db`
+ * a classification model in the `models` directory. Training is done by the `train_classifier.py` script and the 
+   trained model is saved in `classifier.pkl`
+ * a web application to present a dashboard view of the training data set and for classification of new messages 
+   contained in the `app` directory. The webapp itself is contained in the `run.py` file, html templates are stored
+   under `app/templates`
+ * A Jupyter notebook used for exploration of the training set is stored in the `exploration` directory
+ * `doc` contains the user documentation graphics used in this document. 
 
 ## Principle of Operation:
 
